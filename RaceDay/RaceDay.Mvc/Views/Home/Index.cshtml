@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    var role = Context.Session.GetString("Role");
+}
+
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-bold">
+                Welcome to RaceDay
+            </h1>
+
+            <h4 class="text-primary mb-3">
+                Your Race. Your Journey. Your Achievement.
+            </h4>
+
+            <p class="lead">
+                RaceDay is an event management system that allows
+                participants to discover running events, enter
+                competitions and view their race results.
+            </p>
+
+            <p>
+                Organisers can manage events, create race categories,
+                monitor enrolments and record participant results.
+            </p>
+
+            @if (string.IsNullOrEmpty(role))
+            {
+                <a asp-controller="Auth"
+                   asp-action="Register"
+                   class="btn btn-primary btn-lg me-2">
+                    Get Started
+                </a>
+
+                <a asp-controller="Auth"
+                   asp-action="Login"
+                   class="btn btn-outline-primary btn-lg">
+                    Login
+                </a>
+            }
+            else if (role.Equals("Organiser",
+            StringComparison.OrdinalIgnoreCase))
+            {
+                <a asp-controller="Organiser"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Go to Organiser Dashboard
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Participant"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Go to Participant Dashboard
+                </a>
+            }
+        </div>
+
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card shadow border-0">
+                <div class="card-body p-4">
+                    <h3 class="text-primary">What You Can Do</h3>
+
+                    <hr />
+
+                    <h5>For Participants</h5>
+                    <ul>
+                        <li>Browse upcoming races.</li>
+                        <li>View event categories.</li>
+                        <li>Enter available events.</li>
+                        <li>Track your race results.</li>
+                    </ul>
+
+                    <h5>For Organisers</h5>
+                    <ul>
+                        <li>Create and manage events.</li>
+                        <li>Manage race categories.</li>
+                        <li>View participant enrolments.</li>
+                        <li>Record race results.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

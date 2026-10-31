@@ -1,0 +1,219 @@
+﻿@model RaceDay.Mvc.ViewModels.EnrolmentsIndexViewModel
+
+@{
+    ViewData["Title"] = "Manage Enrolments";
+    var role = Context.Session.GetString("Role");
+}
+
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-2">Enrolments</h2>
+    <p class="text-muted mb-4">
+        View and manage event enrolments.
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (role == "Organiser")
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Select an Event</h5>
+
+                <form asp-controller="Enrolments"
+                      asp-action="Index"
+                      method="get">
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <select name="eventId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">-- Select an Event --</option>
+
+                                @foreach (var eventItem in Model.Events)
+                                {
+                                    if (Model.SelectedEventId == eventItem.EventId)
+                                    {
+                                        <option value="@eventItem.EventId" selected>
+                                            @eventItem.Name
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@eventItem.EventId">
+                                            @eventItem.Name
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mt-2 mt-md-0">
+                            <button type="submit" class="btn btn-primary">
+                                Load Enrolments
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (role == "Participant" || Model.SelectedEventId.HasValue)
+    {
+        @if (Model.Enrolments == null || !Model.Enrolments.Any())
+        {
+            <div class="alert alert-info">
+                No enrolments are available yet.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            @if (role == "Organiser")
+                            {
+                                <th>Participant</th>
+                            }
+
+                            <th>Event</th>
+                            <th>Category</th>
+                            <th>Enrolment Date</th>
+                            <th>Status</th>
+                            <th>Bib Number</th>
+
+                            @if (role == "Organiser")
+                            {
+                                <th>Actions</th>
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var enrolment in Model.Enrolments)
+                        {
+                            <tr>
+                                @if (role == "Organiser")
+                                {
+                                    <td>@enrolment.ParticipantName</td>
+                                }
+
+                                <td>@enrolment.EventName</td>
+                                <td>@enrolment.CategoryName</td>
+                                <td>@enrolment.EnrolmentDate.ToString("dd MMM yyyy")</td>
+
+                                <td>
+                                    @if (enrolment.Status == "Confirmed")
+                                    {
+                                        <span class="badge bg-success">Confirmed</span>
+                                    }
+                                    else if (enrolment.Status == "Cancelled")
+                                    {
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            @enrolment.Status
+                                        </span>
+                                    }
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(enrolment.BibNumber)
+                                                        ? "Not assigned"
+                                                        : enrolment.BibNumber)
+                    </td>
+
+                    @if (role == "Organiser")
+                                {
+                                    <td>
+                                        <form asp-controller="Enrolments"
+                                              asp-action="UpdateStatus"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@enrolment.EnrolmentId" />
+
+                                            <input type="hidden"
+                                                   name="eventId"
+                                                   value="@Model.SelectedEventId" />
+
+                                            <select name="status"
+                                                    class="form-select form-select-sm mb-2">
+                                                <option value="Pending"
+                                                        selected="@(enrolment.Status == "Pending")">
+                                                    Pending
+                                                </option>
+
+                                                <option value="Confirmed"
+                                                        selected="@(enrolment.Status == "Confirmed")">
+                                                    Confirmed
+                                                </option>
+
+                                                <option value="Cancelled"
+                                                        selected="@(enrolment.Status == "Cancelled")">
+                                                    Cancelled
+                                                </option>
+                                            </select>
+
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-sm mb-2">
+                                                Update Status
+                                            </button>
+                                        </form>
+
+                                        @if (enrolment.Status == "Confirmed")
+                                        {
+                                            <a asp-controller="Results"
+                                               asp-action="Create"
+                                               asp-route-enrolmentId="@enrolment.EnrolmentId"
+                                               asp-route-eventId="@enrolment.EventId"
+                                               class="btn btn-success btn-sm">
+                                                Record Result
+                                            </a>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+    else if (role == "Organiser")
+    {
+        <div class="alert alert-info">
+            Please select an event above to view its enrolments.
+        </div>
+    }
+
+</div>
+

@@ -1,0 +1,93 @@
+﻿@model RaceDay.Mvc.ViewModels.CreateResultViewModel
+
+@{
+    ViewData["Title"] = "Record Race Result";
+}
+
+<div class="container py-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0">Record Race Result</h3>
+        </div>
+
+        <div class="card-body p-4">
+
+            <h5 class="mb-3">Participant Details</h5>
+
+            <div class="mb-3">
+                <strong>Participant:</strong> @Model.ParticipantName
+            </div>
+
+            <div class="mb-3">
+                <strong>Event:</strong> @Model.EventName
+            </div>
+
+            <div class="mb-4">
+                <strong>Category:</strong> @Model.CategoryName
+            </div>
+
+            <hr />
+
+            <form asp-controller="Results"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="EnrolmentId" />
+                <input type="hidden" asp-for="EventId" />
+                <input type="hidden" asp-for="ParticipantName" />
+                <input type="hidden" asp-for="EventName" />
+                <input type="hidden" asp-for="CategoryName" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FinishTime" class="form-label">
+                        Finishing Time
+                    </label>
+
+                    <input asp-for="FinishTime"
+                           type="text"
+                           class="form-control"
+                           placeholder="Example: 00:45:30" />
+
+                    <small class="text-muted">
+                        Enter the time in hours:minutes:seconds format.
+                    </small>
+
+                    <span asp-validation-for="FinishTime"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="FinishingPosition"
+                           class="form-label">
+                        Finishing Position
+                    </label>
+
+                    <input asp-for="FinishingPosition"
+                           type="number"
+                           min="1"
+                           class="form-control"
+                           placeholder="Example: 1" />
+
+                    <span asp-validation-for="FinishingPosition"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Save Result
+                </button>
+
+                <a asp-controller="Enrolments"
+                   asp-action="Index"
+                   asp-route-eventId="@Model.EventId"
+                   class="btn btn-secondary ms-2">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>

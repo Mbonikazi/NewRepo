@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Participant Dashboard";
+
+    var displayName =
+        Context.Session.GetString("DisplayName") ?? "Participant";
+}
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Participant Dashboard</h2>
+
+        <p class="text-muted">
+            Welcome, @displayName!
+            Manage your race activities from your dashboard.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Browse Events -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Browse Events</h5>
+
+                    <p class="card-text">
+                        Discover upcoming races and view event
+                        information.
+                    </p>
+
+                    <a asp-controller="Events"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Browse Events
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Events -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">My Events</h5>
+
+                    <p class="card-text">
+                        View the events you have entered and
+                        check your enrolment status.
+                    </p>
+
+                    <a asp-controller="Participant"
+                       asp-action="MyEvents"
+                       class="btn btn-primary">
+                        View My Events
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Results -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">My Results</h5>
+
+                    <p class="card-text">
+                        View your recorded race results and
+                        finishing positions.
+                    </p>
+
+                    <a asp-controller="Participant"
+                       asp-action="MyResults"
+                       class="btn btn-primary">
+                        View My Results
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Profile -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">My Profile</h5>
+
+                    <p class="card-text">
+                        View and update your personal account
+                        information.
+                    </p>
+
+                    <a asp-controller="Participant"
+                       asp-action="MyProfile"
+                       class="btn btn-outline-primary">
+                        Manage Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

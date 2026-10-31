@@ -1,0 +1,112 @@
+﻿@model RaceDay.Contracts.EventDto
+
+@{
+    ViewData["Title"] = "Event Details";
+    var role = Context.Session.GetString("Role");
+}
+
+<div class="container py-5">
+    <a asp-controller="Events"
+       asp-action="Index"
+       class="btn btn-outline-secondary mb-4">
+        &larr; Back to Events
+    </a>
+
+    @if (Model == null)
+    {
+        <div class="alert alert-warning">
+            Event details are not available.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white p-4">
+                <h2 class="mb-1">@Model.Name</h2>
+                <span class="badge bg-light text-primary">
+                    @Model.EventType
+                </span>
+            </div>
+
+            <div class="card-body p-4">
+                <h5>Event Description</h5>
+                <p>@Model.Description</p>
+
+                <hr />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <strong>Event Date</strong>
+                        <p>@Model.EventDate.ToString("dd MMMM yyyy")</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Location</strong>
+                        <p>@Model.Location</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Distance</strong>
+                        <p>@Model.DistanceKm km</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Organiser</strong>
+                        <p>@Model.OrganiserName</p>
+                    </div>
+                </div>
+
+                <hr />
+
+                <h4 class="mb-3">Event Categories</h4>
+
+                @if (Model.Categories == null || Model.Categories.Count == 0)
+                {
+                    <p class="text-muted">
+                        No categories have been added to this event yet.
+                    </p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Minimum Age</th>
+                                    <th>Maximum Age</th>
+                                    <th>Entry Fee</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <tr>
+                                        <td>@category.Name</td>
+                                        <td>@category.Description</td>
+                                        <td>@category.MinAge</td>
+                                        <td>@category.MaxAge</td>
+                                        <td>@category.EntryFee.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-ZA"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (role == "Participant")
+                    {
+                        <div class="mt-4">
+                            <a asp-controller="Enrolments"
+                               asp-action="Create"
+                               asp-route-eventId="@Model.EventId"
+                               class="btn btn-success btn-lg">
+                                Enrol in This Event
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
